@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from django.core import send_mail
+from django.core.mail import send_mail
 from backend.settings import EMAIL_HOST_USER
 
 
@@ -42,10 +42,15 @@ class OrderView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             subject = "New order is placed"
-            message = "Dear customer" + "" + data['customer_name'] +  "your order is placed, it will be reached onto your destination asap. Thanks for your order😍"
-            email = data['customer_email']
+            message = (
+                "Dear customer "
+                + data["customer_name"]
+                + ", your order is placed. It will be delivered to your destination as soon as possible. "
+                "Thanks for your order! 😍"
+            )
+            email = data["customer_email"]
             recipient_list = [email]
-            send_mail(subject, message, EMAIL_HOST_USER, recipient_list, fail_silent=True)    
+            send_mail(subject, message, EMAIL_HOST_USER, recipient_list, fail_silently=True)
 
             serializer.save()
             return Response(
